@@ -29,7 +29,7 @@
             <el-card style="height: 267px; margin-left: 10px;">
 
                 <!-- 折线图 -->
-                <div ref="echarts1" style="267px">
+                <div ref="echarts1" style="267px;">
 
                 </div>
             </el-card>
@@ -50,6 +50,7 @@
 
 <script>
 import * as echarts from 'echarts'
+
 export default {
     data() {
         return {

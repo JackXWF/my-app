@@ -18,7 +18,7 @@
         <div class="r-content">
             <el-dropdown>
                 <span class="el-dropdown-link">
-                    <img class="user" src="../assets/images/user-deafult-head-picture.png" alt="头像" />
+                    <img class="user" src="../assets/images/user-deafult-head-picture.png" alt="头像"/>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item>个人中心</el-dropdown-item>
@@ -31,7 +31,8 @@
 
 <script>
 // 辅助函数
-import { mapState } from 'vuex'
+import {mapState} from 'vuex'
+
 export default {
     data() {
         return {}
@@ -71,6 +72,32 @@ export default {
             width: 40px;
             height: 40px;
             border-radius: 50%;
+        }
+    }
+
+    .l-content {
+
+        display: flex;
+        align-items: center;
+
+        /deep/ .el-breadcrumb__item {
+            margin-left: 10px;
+
+            .el-breadcrumb__inner {
+
+                font-weight: normal;
+
+                &.is-link {
+                    color: #666;
+
+                }
+
+            }
+            &:last-child{
+                .el-breadcrumb__inner{
+                    color: white;
+                }
+            }
         }
     }
 
