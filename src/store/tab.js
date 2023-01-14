@@ -19,7 +19,7 @@ export default {
         },
         //更新面包屑数据
         selectMenu(state, val) {
-         
+
             if (val.name !== 'home') {
                 const index = state.tabsList.findIndex(item => item.name === val.name)
                 console.log(val);
@@ -30,6 +30,7 @@ export default {
                     console.log(state.tabsList);
                 }
             }
-        }
+        },
+
     }
 }
