@@ -23,6 +23,11 @@ const routes = [
             {path: 'page2', name: 'page2', component: PageTwo},//页面2
         ]
 
+    },
+
+    {
+        path: '/login',
+
     }
 
 ]

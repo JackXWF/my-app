@@ -16,7 +16,8 @@
 
 <script>
 
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
+import th from "element-ui/src/locale/lang/th";
 
 export default {
     name: "CommonTag",
@@ -29,13 +30,29 @@ export default {
         })
     },
     methods: {
+        ...mapMutations(['closeTag']),
         changeMenu(tag) {
             this.$router.push({name: tag.name})
         },
 
         //点击删除tag
         handleClose(tag, index) {
+            this.closeTag(tag)
+            const length = this.tags.length
 
+            if (tag.name !== this.$route.name) {
+                return
+            }
+
+            if (index === length) {
+                this.$router.push({
+                    name: this.tags[index - 1].name
+                })
+            } else {
+                this.$router.push({
+                    name: this.tags[index].name
+                })
+            }
         }
 
     }

@@ -1,3 +1,5 @@
+import it from "element-ui/src/locale/lang/it";
+
 export default {
     state: {
         isCollapse: false,//控制菜单展开还是收起
@@ -31,6 +33,13 @@ export default {
                 }
             }
         },
+        //删除指定tags数据
+        closeTag(state, item) {
+            console.log(item,'测试')
+            const index = state.tabsList.findIndex(val => val.name === item.name)
+            state.tabsList.splice(index, 1)
 
+
+        }
     }
 }
