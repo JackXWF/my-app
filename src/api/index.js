@@ -8,6 +8,11 @@ export const getData = (data) =>{
     return http.post('/user/login',data)
 }
 
+export const login = (data) =>{
+    //返回promise对象
+    return http.post('/user/login',data)
+}
+
 export const test = () =>{
     return http.get('/user/test')
 }
