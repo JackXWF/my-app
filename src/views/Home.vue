@@ -4,15 +4,15 @@
         <el-col :span="8">
             <el-card class="box-card">
                 <div class="user">
-                    <img src="../assets/images/pig.png"/>
+                    <img src="../assets/images/head.jpg"/>
                     <div class="userInfo">
-                        <p class="name">Admin</p>
-                        <p class="access">超级管理员</p>
+                        <p class="name">{{ info.userName }}</p>
+                        <p class="access">{{ info.userRole}}</p>
                     </div>
                 </div>
                 <div class="loginInfo">
-                    <p>上次登录的时间: <span>2023年1月7日</span></p>
-                    <p>上次登录的地点: <span>江苏</span></p>
+                    <p>登录的时间: <span>{{ info.loginTime }}</span></p>
+                    <p>登录IP: <span style="margin-left: 118px">{{ info.loginIp }}</span></p>
                 </div>
             </el-card>
             <el-card style="margin-top: 20px;">
@@ -54,6 +54,12 @@ import * as echarts from 'echarts'
 export default {
     data() {
         return {
+            info: {
+                userName: '',
+                userRole: '',
+                loginTime: '',
+                loginIp: ''
+            },
 
             form: {
                 id: '10086',
@@ -85,6 +91,36 @@ export default {
         }
     },
     mounted() {
+        //获取用户信息
+        const userInfo = this.$session.get('userInfo')
+
+        if(userInfo.userRole === '0'){
+            userInfo.userRole = '系统管理员'
+        }
+
+        if(userInfo.userRole === '1'){
+            userInfo.userRole = '宿舍管理员'
+        }
+
+        if(userInfo.userRole === '2'){
+            userInfo.userRole = '食堂管理员'
+        }
+
+        if(userInfo.userRole === '3'){
+            userInfo.userRole = '食堂工人'
+        }
+
+        if(userInfo.userRole === '4'){
+            userInfo.userRole = '学生'
+        }
+
+        if(userInfo.userRole === '4'){
+            userInfo.userRole = '维修员工'
+        }
+
+        this.info = userInfo
+
+
 
         getData().then((data) => {
             // 基于准备好的dom  ，初始化echarts实例

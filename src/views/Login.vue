@@ -41,14 +41,22 @@ export default {
             //token
             //将token信息存入cookie 用于不同页面的通信
 
-            this.$refs.form.validate((valid)=>{
-                if(valid){
+            this.$refs.form.validate((valid) => {
+                if (valid) {
                     login(this.form).then(({data}) => {
                         console.log(data)
                         if (data.code === 200) {
-                            Cookie.set('token',data.token)
+                            //保存token信息
+                            Cookie.set('token', data.token)
+
+                            //获取菜单数据
+                            //data.data.menuDataList
+                            this.$store.commit('setMenu', data.data.menuDataList)
+                            this.$store.commit('addMenu', this.$router)
+                            //保存用户信息
+                            this.$session.set('userInfo', data.data)
                             this.$message({
-                                message: data.data,
+                                message: '登录成功',
                                 type: 'success'
                             });
                             this.$router.push('/home')
@@ -58,7 +66,6 @@ export default {
                     })
                 }
             })
-
 
 
         }
@@ -77,7 +84,7 @@ export default {
 
 .login-container {
     width: 350px;
-    margin: 180px auto;
+    margin: 260px auto;
     border: 1px solid #eaeaea;
     padding: 35px 35px 15px 35px;
     background-color: rgba(34, 34, 34, 0.9);
