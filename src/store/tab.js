@@ -11,7 +11,7 @@ export default {
                 name: 'home',
                 label: '首页',
                 icon: 's-home',
-                url: 'Home.vue'
+                url: 'Home/Home'
             }
         ],//面包屑
         menu: []
@@ -51,27 +51,34 @@ export default {
             if (!Cookie.get('menu')) return
 
             const menu = JSON.parse(Cookie.get('menu'))
+
+
             state.menu = menu
 
             //组装动态路由的数据
             const menuArray = []
             menu.forEach(item => {
+                if(item.children.length === 0){
+                    delete item.children
+                }
+
                 if (item.children) {
+                    console.log(item.children)
                     item.children = item.children.map(item => {
                         item.component = () => import(`../views/${item.url}`)
                         return item
                     })
                     menuArray.push(...item.children)
-                } else {
+                } else{
                     item.component = () => import(`../views/${item.url}`)
                     menuArray.push(item)
                 }
             })
 
-            console.log(menuArray,'menuArray')
+            console.log(menuArray, 'menuArray')
             //路由动态添加
             menuArray.forEach(item => {
-                router.addRoute('Main',item)
+                router.addRoute('Main', item)
             })
 
 

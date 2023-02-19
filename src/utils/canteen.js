@@ -1,13 +1,13 @@
 import axios from "axios";
 
 
-const http = axios.create({
+const canteenHttp = axios.create({
     //通用请求前缀
-    baseURL: 'http://127.0.0.1:8086',
+    baseURL: 'http://127.0.0.1:8085',
     timeout: 10000,
 })
 
-http.interceptors.request.use(function (config) {
+canteenHttp.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
     return config;
 }, function (error) {
@@ -16,7 +16,7 @@ http.interceptors.request.use(function (config) {
 });
 
 // 添加响应拦截器
-http.interceptors.response.use(function (response) {
+canteenHttp.interceptors.response.use(function (response) {
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么
     return response;
@@ -26,5 +26,4 @@ http.interceptors.response.use(function (response) {
     return Promise.reject(error);
 });
 
-
-export default http
+export default canteenHttp

@@ -1,6 +1,6 @@
 <template>
     <div class="header-container">
-        <div class="l-content">
+        <div class="l-content" >
             <!-- 按钮 -->
             <el-button @click="handleMenu" icon="el-icon-menu" size="mini"></el-button>
 
@@ -48,6 +48,7 @@ export default {
                 Cookie.remove('token')
                 Cookie.remove('menu')
                 this.$session.remove('userInfo')
+                window.location.reload()
                 this.$router.push('/login')
             }
         }

@@ -6,10 +6,24 @@ import router from "@/router";
 import store from './store'
 import Cookie from "js-cookie";
 import VueSession from "vue-session/index.esm";
+// 分页组件
+import Pagination from "@/components/Pagination";
+//
+import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree } from "@/utils/ruoyi";
+
+
 
 
 Vue.use(ElementUI);//全局注入
 Vue.use(VueSession);
+
+
+// 全局方法挂载
+Vue.prototype.resetForm = resetForm
+
+
+// 全局组件挂载
+Vue.component('Pagination', Pagination)
 
 
 Vue.config.productionTip = false

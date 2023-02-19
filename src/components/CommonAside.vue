@@ -1,28 +1,33 @@
 <template>
-    <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-             :collapse="isCollapse" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-        <h3>{{ isCollapse ? '后台' : '高校学生后勤管理系统' }}</h3>
-        <el-menu-item v-for="item in noChildren" :key="item.name" :index="item.name" @click="clickMenu(item)">
-            <i :class="`el-icon-${item.icon}`"></i>
-            <span slot="title">{{ item.label }}</span>
-        </el-menu-item>
-        <el-submenu :index="item.label" v-for="item in hasChildren" ::key="item.label">
-            <template slot="title">
+    <div>
+        <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
+                 :collapse="isCollapse" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+            <h3>{{ isCollapse ? '后勤' : '高校学生后勤管理系统' }}</h3>
+            <el-menu-item v-for="item in noChildren" :key="item.name" :index="item.name" @click="clickMenu(item)">
                 <i :class="`el-icon-${item.icon}`"></i>
                 <span slot="title">{{ item.label }}</span>
-            </template>
-            <el-menu-item-group v-for="subItem in item.children" ::key="subItem.path">
-                <el-menu-item :index="subItem.path" @click="clickMenu(subItem)">{{ subItem.label }}</el-menu-item>
-            </el-menu-item-group>
-        </el-submenu>
-    </el-menu>
+            </el-menu-item>
+            <el-submenu :index="item.label" v-for="item in hasChildren" ::key="item.label">
+                <template slot="title">
+                    <i :class="`el-icon-${item.icon}`"></i>
+                    <span slot="title">{{ item.label }}</span>
+                </template>
+                <el-menu-item-group v-for="subItem in item.children" ::key="subItem.path">
+                    <el-menu-item :index="subItem.path" @click="clickMenu(subItem)"><i
+                        :class="`el-icon-${item.icon}`"></i>{{ subItem.label }}
+                    </el-menu-item>
+                </el-menu-item-group>
+            </el-submenu>
+        </el-menu>
+    </div>
+
 </template>
 
 
 <style lang="less" scoped>
 .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
-    min-height: 400px;
+    min-height: 890px;
 }
 
 .el-menu {
@@ -67,17 +72,16 @@ export default {
     },
     computed: {
         noChildren() {
-            return this.menuData.filter(item => !item.children)
+            return this.menuData.filter(item => item.children.length === 0)
         },
-
         hasChildren() {
-            return this.menuData.filter(item => item.children)
-        },
-        isCollapse() {
-            return this.$store.state.tab.isCollapse
+            return this.menuData.filter(item => item.children != 0)
         },
         menuData() {
             return JSON.parse(Cookie.get('menu')) || this.$store.state.tab.menu
+        },
+        isCollapse() {
+            return this.$store.state.tab.isCollapse
         }
     }
 }
