@@ -20,3 +20,7 @@ export const deleteOrder = (id) => {
     return repairsHttp.delete('repairs/delete/'+id)
 }
 
+
+export const complete = (params) => {
+    return repairsHttp.post('repairs/complete',params)
+}

@@ -51,7 +51,7 @@
                         icon="el-icon-info"
                         @click="handleUpdate(scope.row)"
                         v-hasPermi="['student:student:edit']"
-                        :disabled='roleIdentity'
+
                     >详情
                     </el-button>
                     <el-button
@@ -160,6 +160,12 @@
                                 <span>{{ this.drawerParams.handleUserPhone }}</span>
                             </el-col>
                         </el-row>
+                        <div style="display: flex;justify-content: center;margin-top: 20px">
+                            <el-button type="primary" @click="completeRepair" :disabled='completeFlag'>已完成维修
+                            </el-button>
+                        </div>
+
+
                     </el-card>
                 </el-col>
                 <el-col :span="8">
@@ -180,7 +186,8 @@
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer">
-                                <el-button type="primary" @click="submitForm">确定指派</el-button>
+                                <el-button type="primary" :disabled='roleIdentity' @click="submitForm">确定指派
+                                </el-button>
                             </div>
                         </div>
 
@@ -195,7 +202,7 @@
 
 <script>
 
-import {orderList, employeeList, sendEmployee, deleteOrder} from "@/api/repairs/repairs";
+import {orderList, employeeList, sendEmployee, deleteOrder, complete} from "@/api/repairs/repairs";
 import drawer from "@/components/drawer.vue";
 
 export default {
@@ -204,6 +211,8 @@ export default {
     },
     data() {
         return {
+            sendFlag: false,
+            completeFlag: false,
             display: false,
             drawerWidth: '80%',
             roleIdentity: true,
@@ -266,7 +275,8 @@ export default {
                 params: {
                     id: '',
                     state: '',
-                    handleUserId: ''
+                    handleUserId: '',
+                    initUser: '',
                 }
             },
             // 表单参数
@@ -274,24 +284,7 @@ export default {
                 typeId: '',
                 addUser: ''
             },
-            // 表单校验
-            rules: {
-                name: [{
-                    required: true,
-                    message: '请输入菜名',
-                    trigger: 'blur'
-                }],
-                price: [{
-                    required: true,
-                    message: '请输入价格',
-                    trigger: 'blur'
-                }],
-                type: [{
-                    required: true,
-                    message: '请选择类型',
-                    trigger: 'change'
-                }],
-            }
+
         };
     },
     created() {
@@ -313,6 +306,15 @@ export default {
             const role = this.$session.get('userInfo').userRole
             if (role === '0') {
                 this.roleIdentity = false
+                this.completeFlag = true
+            } else if (role === '4') {
+                this.queryParams.params.initUser = this.$session.get('userInfo').userName
+                this.completeFlag = true
+            } else if (role === '6') {
+                this.queryParams.params.handleUserId = this.$session.get('userInfo').userName
+                this.completeFlag = false
+            } else {
+                this.completeFlag = true
             }
 
 
@@ -332,6 +334,7 @@ export default {
                         item.state = '处理中'
                     } else if (item.state === '2') {
                         item.state = '已处理'
+
                     }
 
                     const imageTest = []
@@ -416,15 +419,29 @@ export default {
         /** 提交按钮 */
         submitForm() {
             this.drawerParams.handleUserId = this.hUser
-            sendEmployee(this.drawerParams).then(response => {
+            if (this.drawerParams.state === '已处理') {
+                this.$message.error("该工单已完成维修,无需再指派")
+            } else {
+                sendEmployee(this.drawerParams).then(response => {
+                    if (response.data.code === 200) {
+                        this.$message.success("指派成功")
+                        this.getList()
+                        this.display = false
+                        this.hUser = '';
+                    }
+                })
+            }
+
+        },
+        completeRepair() {
+            complete(this.drawerParams).then(response => {
                 if (response.data.code === 200) {
-                    this.$message.success("指派成功")
+                    this.$message.success("已完成,感谢您的维修!")
                     this.getList()
                     this.display = false
                     this.hUser = '';
                 }
             })
-
 
         },
         /** 删除按钮操作 */

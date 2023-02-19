@@ -8,7 +8,7 @@
                 <el-form ref="elForm" :model="formData" :rules="rules" size="medium" label-width="100px"
                          label-position="left">
                     <el-form-item label="报修人" prop="initUser">
-                        <el-input v-model="formData.initUser" placeholder="请输入报修人" :maxlength="20" clearable
+                        <el-input v-model="formData.initUser" placeholder="请输入报修人" :disabled="true" :maxlength="20" clearable
                                   prefix-icon='el-icon-user' :style="{width: '100%'}"></el-input>
                     </el-form-item>
                     <el-form-item label="联系电话" prop="initPhone">
@@ -90,6 +90,7 @@ export default {
             dialogVisible: false,
             disabled: false,
             imageUrl: '',
+            name: '',
             imageList: [],
             formData: {
                 initUser: '',
@@ -136,6 +137,8 @@ export default {
     computed: {},
     watch: {},
     created() {
+        this.formData.initUser = this.$session.get('userInfo').userName
+
     },
     mounted() {
     },
@@ -151,7 +154,7 @@ export default {
                             type: 'success'
                         });
                         setTimeout(() => {
-                            this.$router.go(0);
+                            this.$router.push('/repairsList');
                         }, 500);
                     }
                 })

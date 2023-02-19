@@ -114,7 +114,7 @@ export default {
             userInfo.userRole = '学生'
         }
 
-        if(userInfo.userRole === '4'){
+        if(userInfo.userRole === '6'){
             userInfo.userRole = '维修员工'
         }
 
