@@ -18,13 +18,12 @@
                                :value="item.value" :disabled="item.disabled"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="处理人" :prop="'params.handleUser'">
-                <el-input
-                    v-model="queryParams.params.handleUser"
-                    placeholder="请输入处理人"
-                    clearable
-                    @keyup.enter.native="handleQuery"
-                />
+            <el-form-item label="处理人" :prop="'params.handleUserId'">
+                <el-select v-model="queryParams.params.handleUserId" placeholder="请选择处理人" clearable
+                           :style="{width: '100%'}">
+                    <el-option v-for="(item, index) in employeeList" :key="index" :label="item.name"
+                               :value="item.id" :disabled="item.disabled"></el-option>
+                </el-select>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -39,13 +38,8 @@
             <el-table-column label="报修人" align="center" prop="initUser"/>
             <el-table-column label="联系电话" align="center" prop="initPhone"/>
             <el-table-column label="报修地点" align="center" prop="address"/>
-            <el-table-column label="图片" align="center" prop="images">
-                <template slot-scope="scope">
-                    <el-image style="width: 100px;height: 100px" :src="scope.row.image"/>
-                </template>
-            </el-table-column>
             <el-table-column label="描述" align="center" prop="descr"/>
-            <el-table-column label="维修人" align="center" prop="handleUser"/>
+            <el-table-column label="维修人" align="center" prop="handleUserName"/>
             <el-table-column label="添加时间" align="center" prop="addTime"/>
             <el-table-column label="处理状态" align="center" prop="state"/>
             <el-table-column label="处理时间" align="center" prop="handleTime"/>
@@ -81,62 +75,144 @@
                     @pagination="getList"
         />
 
-        <el-dialog :title="title" :visible.sync="open" width="1000px" height>
-            <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-                <el-form-item label="菜名" prop="name">
-                    <el-input v-model="form.name"
-                              placeholder="请输入菜名" clearable/>
-                </el-form-item>
-                <el-form-item label="价格" prop="price">
-                    <el-input type="text" v-model="form.price" clearable maxlength="8" placeholder="请输入价格"
-                              oninput="value=value.replace(/[^\d.]/g,'')"/>
-                </el-form-item>
-                <el-form-item label="类型" prop="type">
-                    <el-select v-model="form.type" placeholder="请选择菜品类型" clearable
-                               :style="{width: '100%'}">
-                        <el-option v-for="(item, index) in typeList" :key="index" :label="item.type"
-                                   :value="item.id" :disabled="item.disabled"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="图片" prop="image">
-                    <el-upload
-                        class="avatar-uploader"
-                        :action="urlPath"
-                        :show-file-list="false"
-                        :on-success="handleAvatarSuccess"
-                        :before-upload="beforeAvatarUpload">
-                        <img v-if="imageUrl" :src="imageUrl" class="avatar" width="150px" height="150px">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="备注" prop="descr">
-                    <el-input type="textarea" v-model="form.descr" :rows="2" placeholder="请输入备注"/>
-                </el-form-item>
-
-
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="submitForm">确 定</el-button>
-                <el-button @click="cancel">取 消</el-button>
+        <drawer title="报修详情" :display.sync="display" :width="drawerWidth">
+            <div style="width:100%;height: 100px;background-color: #409EFF" class="wrapper">
+                <p style="font-size: 35px;color: white;margin-left: 20px">报修详情<span>(</span>工单号<span>)</span></p>
             </div>
-        </el-dialog>
+            <el-row>
+                <el-col :span="8">
+                    <!-- 图形 -->
+                    <el-card style="height: 750px; margin-left: 10px;" class="box-card">
+                        <div slot="header" class="clearfix">
+                            <span style="font-size: 20px">报修信息</span>
+                        </div>
+                        <el-row class="card-content">
+                            <el-col :span="12">
+                                <span>报修人</span>
+                            </el-col>
+                            <el-col :span="12">
+                                <span>{{ this.drawerParams.initUser }}</span>
+                            </el-col>
+                        </el-row>
+                        <el-row class="card-content">
+                            <el-col :span="12">
+                                <span>报修人电话</span>
+                            </el-col>
+                            <el-col :span="12">
+                                <span>{{ this.drawerParams.initPhone }}</span>
+                            </el-col>
+                        </el-row>
+                        <el-row class="card-content">
+                            <el-col :span="12">
+                                <span>报修物品</span>
+                            </el-col>
+                            <el-col :span="12">
+                                <span>{{ this.drawerParams.value }}</span>
+                            </el-col>
+                        </el-row>
+                        <el-row class="card-content">
+                            <el-col :span="12">
+                                <span>报修地点</span>
+                            </el-col>
+                            <el-col :span="12">
+                                <span>{{ this.drawerParams.address }}</span>
+                            </el-col>
+                        </el-row>
+                        <el-row class="card-descr">
+                            <el-col :span="12">
+                                <span>报修描述</span>
+                            </el-col>
+                            <el-col :span="12">
+                                <span>{{ this.drawerParams.descr }}</span>
+                            </el-col>
+                        </el-row>
+                        <h2>故障图片</h2>
+                        <div style="display: flex; justify-content:space-between">
+                            <div v-for="item in this.drawerParams.images">
+                                <el-image style="width: 200px;height: 200px" :src="item"/>
+                            </div>
+                        </div>
+
+                    </el-card>
+                </el-col>
+                <el-col :span="8">
+                    <!-- 图形 -->
+                    <el-card style="height: 750px; margin-left: 10px;" class="box-card">
+                        <div slot="header" class="clearfix">
+                            <span style="font-size: 20px">指派信息</span>
+                        </div>
+                        <div class="card-content">
+                            <span style="color: deepskyblue;margin:auto">{{ this.drawerParams.state }}</span>
+                        </div>
+                        <el-row class="card-content">
+                            <el-col :span="12">
+                                <span>指派员工</span>
+                            </el-col>
+                            <el-col :span="12">
+                                <span>{{ this.drawerParams.handleUserName }}</span>
+                            </el-col>
+                        </el-row>
+                        <el-row class="card-content">
+                            <el-col :span="12">
+                                <span>联系电话</span>
+                            </el-col>
+                            <el-col :span="12">
+                                <span>{{ this.drawerParams.handleUserPhone }}</span>
+                            </el-col>
+                        </el-row>
+                    </el-card>
+                </el-col>
+                <el-col :span="8">
+                    <!-- 图形 -->
+                    <el-card style="height: 750px; margin-left: 10px;" class="box-card">
+                        <div slot="header" class="clearfix">
+                            <span style="font-size: 20px">指派受理</span>
+                        </div>
+                        <div>
+                            <el-form>
+                                <el-form-item>
+                                    <el-select v-model="hUser" placeholder="请选择维修人员"
+                                               clearable
+                                               :style="{width: '100%'}">
+                                        <el-option v-for="(item, index) in employeeList" :key="index" :label="item.name"
+                                                   :value="item.id" :disabled="item.disabled"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button type="primary" @click="submitForm">确定指派</el-button>
+                            </div>
+                        </div>
+
+                    </el-card>
+                </el-col>
+            </el-row>
+
+        </drawer>
     </div>
 
 </template>
 
 <script>
 
-import {orderList} from "@/api/repairs/repairs";
+import {orderList, employeeList, sendEmployee, deleteOrder} from "@/api/repairs/repairs";
+import drawer from "@/components/drawer.vue";
 
 export default {
+    components: {
+        drawer
+    },
     data() {
         return {
+            display: false,
+            drawerWidth: '80%',
             roleIdentity: true,
             urlPath: '',
             imageUrl: '',
             imageUrlList: [],
             imageName: '',
             disabled: false,
+            hUser: '',
             //角色
             role: '',
             // 遮罩层
@@ -150,9 +226,11 @@ export default {
             multiple: true,
             // 显示搜索条件
             showSearch: true,
+            replaceImages: [],
             // 总条数
             total: 0,
             flag: '',
+            employeeList: [],
             repairsList: [],
             stateSelect: [{
                 "label": "未处理",
@@ -168,6 +246,19 @@ export default {
             title: "",
             // 是否显示弹出层
             open: false,
+            //抽屉参数
+            drawerParams: {
+                initUser: '',
+                initPhone: '',
+                value: '',
+                address: '',
+                state: '',
+                descr: '',
+                images: '',
+                handleUserName: '',
+                handleUserPhone: '',
+                handleUserId: '',
+            },
             // 查询参数
             queryParams: {
                 pageNum: 1,
@@ -175,7 +266,7 @@ export default {
                 params: {
                     id: '',
                     state: '',
-                    handleUser: ''
+                    handleUserId: ''
                 }
             },
             // 表单参数
@@ -224,8 +315,8 @@ export default {
                 this.roleIdentity = false
             }
 
-            console.log(this.queryParams, "参数")
 
+            console.log(this.queryParams, "查询")
             orderList(this.queryParams).then(response => {
                 console.log(response.data, "返回")
                 if (response.data.data === null) {
@@ -242,6 +333,16 @@ export default {
                     } else if (item.state === '2') {
                         item.state = '已处理'
                     }
+
+                    const imageTest = []
+
+                    item.images.forEach(i => {
+                        i = 'http://127.0.0.1:8088/repairsImage/' + i;
+                        imageTest.push(i)
+                    })
+
+                    item.images = imageTest
+
                 })
 
 
@@ -249,8 +350,9 @@ export default {
 
                 this.repairsList = list
 
-
-                console.log(this.repairsList, "换个地方会")
+                employeeList().then(response => {
+                    this.employeeList = response.data
+                })
             });
 
 
@@ -300,77 +402,44 @@ export default {
         },
         /** 修改按钮操作 */
         handleUpdate(row) {
-
+            this.display = true
             this.flag = 0;
             this.reset();
+            this.drawerParams = row
             this.title = "工单详情";
             this.disabled = true;
             this.open = true;
 
+            console.log(this.drawerParams, "抽屉")
+
         },
         /** 提交按钮 */
         submitForm() {
-            this.$refs["form"].validate(valid => {
-                if (valid) {
-                    if (this.flag === 1) {
-                        this.form.typeId = this.form.type
-                        this.form.image = this.imageName
-                        this.form.addUser = this.$session.get('userInfo').userName
-                        console.log(this.form, "信息")
-                        addDish(this.form).then(response => {
-                            if (response.data.code === 200) {
-                                this.$message({
-                                    message: '新增成功',
-                                    type: 'success'
-                                });
-                                this.open = false;
-                                this.getList();
-                            } else {
-                                this.$message.error("该菜品已存在,请勿重复添加!")
-                            }
-
-                        });
-                    } else if (this.flag === 0) {
-                        //更新
-                        console.log(this.form, "hjdkghsdif")
-                        this.form.image = this.imageName
-                        updateDish(this.form).then(response => {
-                            console.log(response, "相应")
-                            if (response.data.code === 200) {
-                                this.$message({
-                                    message: '修改成功',
-                                    type: 'success'
-                                });
-                                this.open = false;
-                                this.getList();
-                            } else {
-                                this.$message.error('修改失败,该菜品类型下面存在相同菜品!')
-                            }
-                        });
-
-
-                    }
-
-
+            this.drawerParams.handleUserId = this.hUser
+            sendEmployee(this.drawerParams).then(response => {
+                if (response.data.code === 200) {
+                    this.$message.success("指派成功")
+                    this.getList()
+                    this.display = false
+                    this.hUser = '';
                 }
-            });
+            })
+
+
         },
         /** 删除按钮操作 */
         handleDelete(row) {
-            console.log(row, "删除")
-            const dishId = row.id || this.ids;
-            const dishName = row.name || this.names;
-            this.$confirm('是否确认删除"' + dishName + '"的菜品信息？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(function () {
-                return removeDish(dishId);
-            }).then(() => {
-                this.getList();
-                this.$message.success('删除成功')
-            }).catch(() => {
-            });
+            if (row.state !== '已处理') {
+                this.$message.error("该工单未完结,不能删除!")
+            } else {
+                deleteOrder(row.id).then(response => {
+
+                    if (response.data.code === 200) {
+                        this.$message.success("删除成功")
+                        this.getList()
+                    }
+                })
+            }
         },
         /** 导出按钮操作 */
         /** 导出按钮操作 */
@@ -415,6 +484,9 @@ export default {
                 this.$message.error('上传头像图片大小不能超过 2MB!');
             }
             return isJPG && isLt2M;
+        },
+        changeWidth() {
+            this.drawerWidth = (this.drawerWidth === '500px') ? '800px' : '500px'
         }
     }
 }
@@ -436,5 +508,106 @@ export default {
 ::v-deep input[type='number'] {
     -moz-appearance: textfield !important;
 }
+
+
 </style>
 
+<style>
+.wrapper {
+    line-height: 100px;
+    height: 100vh;
+    background-image: linear-gradient(to bottom right, #a8edea, #fed6e3);
+    overflow: hidden;
+}
+</style>
+
+<style lang="scss">
+
+.btn {
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    letter-spacing: 3px;
+
+    &:hover {
+        opacity: .8;
+    }
+
+    &.open {
+        width: 200px;
+        height: 80px;
+        font-size: 18px;
+        background-color: orange;
+        color: #fff;
+    }
+
+    &.try {
+        width: 100px;
+        height: 40px;
+        background-color: green;
+        color: #fff;
+        margin-top: 50px;
+    }
+}
+</style>
+
+
+<style lang="less" scoped>
+.text {
+    font-size: 14px;
+}
+
+.item {
+    margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+
+.clearfix:after {
+    clear: both
+}
+
+.card-content {
+    display: flex;
+    padding-left: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    line-height: 50px;
+    height: 50px;
+    background-color: #d5d5d5;
+    border-radius: 5%;
+
+    .text {
+        margin-left: 150px;
+    }
+}
+
+.card-descr {
+    display: flex;
+    padding-left: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    line-height: 100px;
+    height: 100px;
+    background-color: #d5d5d5;
+    border-radius: 5%;
+}
+
+.card-iamges {
+    display: flex;
+    padding-left: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    line-height: 200px;
+    height: 200px;
+    background-color: #d5d5d5;
+    border-radius: 5%;
+}
+
+
+</style>

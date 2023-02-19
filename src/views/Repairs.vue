@@ -12,9 +12,14 @@
                                   prefix-icon='el-icon-user' :style="{width: '100%'}"></el-input>
                     </el-form-item>
                     <el-form-item label="联系电话" prop="initPhone">
-                        <el-input v-model="formData.initPhone" placeholder="请输入联系电话" :maxlength="11" show-word-limit
+                        <el-input v-model="formData.initPhone" placeholder="请输入联系电话" :maxlength="11"
+                                  show-word-limit
                                   clearable
                                   prefix-icon='el-icon-mobile' :style="{width: '100%'}"></el-input>
+                    </el-form-item>
+                    <el-form-item label="故障物品" prop="value">
+                        <el-input v-model="formData.value" placeholder="请输入故障物品" clearable
+                                  prefix-icon='el-icon-office-building' :style="{width: '100%'}"></el-input>
                     </el-form-item>
                     <el-form-item label="故障地点" prop="address">
                         <el-input v-model="formData.address" placeholder="请输入故障地点" clearable
@@ -91,6 +96,7 @@ export default {
                 initPhone: '',
                 address: undefined,
                 images: [],
+                value: '',
                 descr: '',
             },
             rules: {
@@ -111,6 +117,12 @@ export default {
                 address: [{
                     required: true,
                     message: '请输入故障地点',
+                    trigger: 'blur'
+                }]
+                ,
+                value: [{
+                    required: true,
+                    message: '请输入故障物品',
                     trigger: 'blur'
                 }],
                 descr: [{
@@ -133,14 +145,14 @@ export default {
                 if (!valid) return
                 // TODO 提交表单
                 addOrders(this.formData).then(response => {
-                    if(response.data.code === 200){
+                    if (response.data.code === 200) {
                         this.$message({
                             message: '报修成功',
                             type: 'success'
                         });
-                        setTimeout( () => {
+                        setTimeout(() => {
                             this.$router.go(0);
-                        },500);
+                        }, 500);
                     }
                 })
 
@@ -155,7 +167,7 @@ export default {
             for (let i = 0; i < uploadFiles.length; i++) {
                 if (uploadFiles[i]['url'] == file.url) {
                     uploadFiles.splice(i, 1)
-                    this.formData.images.splice(i,1)
+                    this.formData.images.splice(i, 1)
                 }
             }
         },
