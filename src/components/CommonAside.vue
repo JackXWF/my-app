@@ -27,7 +27,7 @@
 <style lang="less" scoped>
 .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
-    min-height: 890px;
+    min-height: 1200px;
 }
 
 .el-menu {

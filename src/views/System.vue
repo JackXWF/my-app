@@ -1,30 +1,138 @@
 <template>
-<div><el-button type="text" @click="centerDialogVisible = true">点击打开 Dialog</el-button>
+    <div>
+        <el-card>
+            <el-form ref="elForm" :model="formData" :rules="rules" size="medium" label-width="100px">
+                <el-form-item label="角色" prop="userRole">
+                    <el-select v-model="formData.userRole" placeholder="请择选角色" clearable :style="{width: '100%'}">
+                        <el-option v-for="(item, index) in roleOptions" :key="index" :label="item.label" :value="item.value"
+                                   :disabled="item.disabled"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="账号" prop="userName">
+                    <el-input type="number" v-model="formData.userName" placeholder="请输入账号" :maxlength="11" show-word-limit clearable
+                              prefix-icon='el-icon-user' :style="{width: '100%'}"></el-input>
+                </el-form-item>
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="formData.name" placeholder="请输入姓名" :maxlength="11" show-word-limit clearable
+                              prefix-icon='el-icon-user' :style="{width: '100%'}"></el-input>
+                </el-form-item>
+                <el-form-item label="手机号" prop="phone">
+                    <el-input v-model="formData.phone" placeholder="请输入手机号" :maxlength="11" show-word-limit clearable
+                              prefix-icon='el-icon-mobile' :style="{width: '100%'}"></el-input>
+                </el-form-item>
+                <el-form-item label="性别" prop="gender">
+                    <el-radio-group v-model="formData.gender" size="medium">
+                        <el-radio v-for="(item, index) in genderOptions" :key="index" :label="item.value"
+                                  :disabled="item.disabled">{{item.label}}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item size="large">
+                    <el-button type="primary" @click="submitForm">提交</el-button>
+                    <el-button @click="resetForm">重置</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
 
-    <el-dialog
-        title="提示"
-        :visible.sync="centerDialogVisible"
-        width="30%"
-        center>
-        <span>需要注意的是内容是默认不居中的</span>
-        <span slot="footer" class="dialog-footer">
-    <el-button @click="centerDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
-  </span>
-    </el-dialog>
-</div>
+    </div>
 </template>
-
 <script>
+import {addUser} from "@/api";
 export default {
+    components: {},
+    props: [],
     data() {
         return {
-            centerDialogVisible: false
-        };
+            flag : 'false',
+            formData: {
+                userRole: undefined,
+                phone: '',
+                gender: 1,
+                userName:'',
+                name:''
+            },
+            rules: {
+                userRole: [{
+                    required: true,
+                    message: '请择选角色',
+                    trigger: 'change'
+                }],
+                phone: [{
+                    required: true,
+                    message: '请输入手机号',
+                    trigger: 'blur'
+                }, {
+                    pattern: /^1(3|4|5|7|8|9)\d{9}$/,
+                    message: '手机号格式错误',
+                    trigger: 'blur'
+                }],
+                gender: [{
+                    required: true,
+                    message: '性别不能为空',
+                    trigger: 'change'
+                }],
+                userName: [{
+                    required: true,
+                    message: '账号不能为空',
+                    trigger: 'blur'
+                }],
+                name: [{
+                    required: true,
+                    message: '姓名不能为空',
+                    trigger: 'blur'
+                }],
+            },
+            roleOptions: [{
+                "label": "系统管理员",
+                "value": 0
+            }, {
+                "label": "宿舍管理员",
+                "value": 1
+            },{
+                "label": "食堂管理员",
+                "value": 2
+            },{
+                "label": "维修工人",
+                "value": 6
+            }
+
+            ],
+
+            genderOptions: [{
+                "label": "男",
+                "value": 1
+            }, {
+                "label": "女",
+                "value": 0
+            }],
+        }
+    },
+    computed: {},
+    watch: {},
+    created() {},
+    mounted() {},
+    methods: {
+        submitForm() {
+            this.$refs['elForm'].validate(valid => {
+                if (!valid) return
+                // TODO 提交表单
+                console.log(this.formData,"购买了时间")
+                addUser(this.formData).then(r=>{
+                    console.log(r,"jngdai")
+                    if(r.data.code === 200){
+                        this.$message.success("添加成功!")
+                        this.resetForm();
+                    }else {
+                        this.$message.error("添加失败,该用户已存在!")
+                    }
+                })
+            })
+        },
+        resetForm() {
+            this.$refs['elForm'].resetFields()
+        },
     }
-};
+}
+
 </script>
-
-<style scoped>
-
+<style>
 </style>

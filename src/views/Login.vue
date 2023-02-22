@@ -21,6 +21,7 @@ import Cookie from 'js-cookie'
 export default {
     data() {
         return {
+            flag: 0,
             form: {
                 userName: '',
                 userPassword: ''
@@ -40,7 +41,6 @@ export default {
         submit() {
             //token
             //将token信息存入cookie 用于不同页面的通信
-
             this.$refs.form.validate((valid) => {
                 if (valid) {
                     login(this.form).then(({data}) => {
@@ -61,7 +61,13 @@ export default {
                             });
                             this.$router.push('/home')
                         } else {
-                            this.$message.error(data.msg)
+                            this.flag++;
+                            if(this.flag>=3){
+                                this.$message.error("您输入密码已错误超过三次,如忘记密码请联系管理员:2933203540@qq.com")
+                            }else {
+                                this.$message.error(data.msg)
+                            }
+
                         }
                     })
                 }

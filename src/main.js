@@ -10,6 +10,9 @@ import VueSession from "vue-session/index.esm";
 import Pagination from "@/components/Pagination";
 //
 import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree } from "@/utils/ruoyi";
+import echarts from "echarts";
+
+
 
 
 
@@ -21,6 +24,8 @@ Vue.use(VueSession);
 // 全局方法挂载
 Vue.prototype.resetForm = resetForm
 
+//全局echarts
+Vue.prototype.$echarts = echarts;
 
 // 全局组件挂载
 Vue.component('Pagination', Pagination)

@@ -72,7 +72,7 @@ export default {
     loadingInstance = Loading.service({
       lock: true,
       text: content,
-      spinner: "el-icon-loading",
+      spinner: "el-icons-loading",
       background: "rgba(0, 0, 0, 0.7)",
     })
   },

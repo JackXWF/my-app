@@ -36,3 +36,17 @@ export const removeStudent = (stuNumber) =>{
 export const exportBcgl = (query) =>{
     return http.get('/student//export/'+query)
 }
+
+export const addUser = (params) =>{
+    return http.post('/user/add',params)
+}
+
+export const updatePwd = (params) =>{
+    return http.post('/user/updatePass',params)
+}
+
+export const homeData = () =>{
+    return http.get('/user/homeData')
+}
+
+
