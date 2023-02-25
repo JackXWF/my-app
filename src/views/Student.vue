@@ -63,6 +63,16 @@
             </el-col>
             <el-col :span="1.5">
                 <el-button
+                    type="success"
+                    plain
+                    icon="el-icon-upload2"
+                    size="mini"
+                    @click="handleImport"
+                >导入
+                </el-button>
+            </el-col>
+            <el-col :span="1.5">
+                <el-button
                     type="warning"
                     plain
                     icon="el-icon-download"
@@ -115,7 +125,8 @@
         <el-dialog :title="title" :visible.sync="open" width="500px">
             <el-form ref="form" :model="form" :rules="rules" label-width="80px">
                 <el-form-item label="学号" prop="stunumber">
-                    <el-input v-model="form.stunumber" :disabled="disabled" type="number" oninput="if(value.length>10)value=value.slice(0,10)" placeholder="请输入学号"/>
+                    <el-input v-model="form.stunumber" :disabled="disabled" type="number"
+                              oninput="if(value.length>10)value=value.slice(0,10)" placeholder="请输入学号"/>
                 </el-form-item>
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="form.name" placeholder="请输入姓名"/>
@@ -140,18 +151,39 @@
                 <el-button @click="cancel">取 消</el-button>
             </div>
         </el-dialog>
+        <!--上传excel-->
+        <el-dialog title="导入excel" :visible.sync="openExcel" width="500px">
+            <el-upload
+                class="upload-demo"
+                drag
+                :action="excelUrl"
+                :on-success="handleAvatarSuccess"
+                multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            </el-upload>
+        </el-dialog>
     </div>
 
 </template>
 
 <script>
-import {getStudentList, addStudent, updateStudent, removeStudent, exportBcgl} from "@/api";
+import {
+    getStudentList,
+    addStudent,
+    updateStudent,
+    removeStudent,
+    exportBcgl,
+    exportStudent,
+    importStudent
+} from "@/api";
 import {dormitoryList} from "@/api/dormitory/dormitory";
 
 export default {
     name: "Student",
     data() {
         return {
+            excelUrl: '',
             disabled: false,
             // 遮罩层
             loading: true,
@@ -174,6 +206,7 @@ export default {
             title: "",
             // 是否显示弹出层
             open: false,
+            openExcel: false,
             // 查询参数
             queryParams: {
                 pageNum: 1,
@@ -331,7 +364,9 @@ export default {
             this.$refs["form"].validate(valid => {
                 if (valid) {
                     if (this.flag === 1) {
+                        console.log(this.form, "宿舍是师范")
                         addStudent(this.form).then(response => {
+                            console.log(response, "密码")
                             if (response.data.code === 200) {
                                 this.$message({
                                     message: '新增成功',
@@ -340,7 +375,8 @@ export default {
                                 this.open = false;
                                 this.getList();
                             } else {
-                                this.$message.error("该学生已存在,请勿重复添加!")
+                                const msg = response.data.msg
+                                this.$message.error(msg)
                             }
 
                         });
@@ -386,20 +422,22 @@ export default {
         /** 导出按钮操作 */
         /** 导出按钮操作 */
         handleExport() {
-            const queryParams = this.queryParams;
-            this.$confirm("是否确认导出所有数据项?", "警告", {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                type: "warning",
+            exportStudent().then(r => {
+                if (r.data.code === 200) {
+                }
+                this.$message.success("已成功导出到D盘!")
             })
-                .then(function () {
-                    return exportBcgl(queryParams);
-                })
-                .then((response) => {
-                    this.download(response.msg);
-                })
-                .catch(function () {
-                });
+        },
+        handleImport() {
+            this.openExcel = true
+            this.excelUrl = "http://localhost:8086/student/import"
+
+
+        },
+        handleAvatarSuccess() {
+            this.$message.success("批量导入成功!");
+            this.openExcel = false
+            this.getList()
         }
     }
 }

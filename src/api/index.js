@@ -50,3 +50,11 @@ export const homeData = () =>{
 }
 
 
+export const exportStudent = () =>{
+    return http.get('/student/export')
+}
+
+
+export const importStudent = (params) =>{
+    return http.post('/student/import',params)
+}

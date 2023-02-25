@@ -3,7 +3,7 @@
         <div class="gva-card-box">
             <div class="gva-card gva-top-card">
                 <div class="gva-top-card-left">
-                    <div class="gva-top-card-left-title">Hello，<span>{{ info.userName }}</span>，请开始一天的工作吧</div>
+                    <div class="gva-top-card-left-title">Hello，<span>{{ info.userName }}</span>，欢迎登录高校学生管理系统!</div>
                     <div class="gva-top-card-left-dot">登录IP：<span>&nbsp;&nbsp;{{info.loginIp}}</span>&nbsp;&nbsp; || &nbsp;&nbsp;登录时间：<span>&nbsp;&nbsp;{{info.loginTime}}</span></div>
                     <div class="gva-top-card-left-rows">
                         <el-row>

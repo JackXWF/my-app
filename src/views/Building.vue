@@ -44,6 +44,7 @@
             <el-table-column type="selection" width="55" align="center"/>
             <el-table-column label="编号" align="center" prop="id"/>
             <el-table-column label="楼名" align="center" prop="buildName"/>
+            <el-table-column label="类型" align="center" prop="flag"/>
             <el-table-column label="图片" align="center" prop="buildImage">
                 <template slot-scope="scope">
                     <el-image style="width: 100px;height: 100px" :src="scope.row.buildImage"/>
@@ -87,6 +88,15 @@
                 <el-form-item label="楼名" prop="buildName">
                     <el-input v-model="form.buildName" :disabled="true"/>
                 </el-form-item>
+                <el-form-item label="类型" prop="flag">
+                    <el-select v-model="form.flag" placeholder="请选择宿舍类型" clearable
+                               :style="{width: '100%'}">
+                        <el-option v-for="(item, index) in flagSelect" :key="index" :label="item.label"
+                                   :value="item.value" :disabled="item.disabled"></el-option>
+                    </el-select>
+                </el-form-item>
+
+
                 <el-form-item label="图片" prop="buildImage">
                     <el-upload
                         class="avatar-uploader"
@@ -111,7 +121,7 @@
 </template>
 
 <script>
-import { exportBcgl} from "@/api";
+import {exportBcgl} from "@/api";
 import {buildList, queryList, add, update, deleteBuild} from "@/api/dormitory/dormitory";
 import Vue from "vue";
 
@@ -144,7 +154,26 @@ export default {
             // 弹出层标题
             title: "",
             // 是否显示弹出层
+            rules: {
+                id: [{
+                    required: true,
+                    message: '请输入楼号',
+                    trigger: 'blur'
+                }],
+                flag: [{
+                    required: true,
+                    message: '请选择宿舍类型',
+                    trigger: 'change'
+                }],
+            },
             open: false,
+            flagSelect: [{
+                "label": "男生宿舍",
+                "value": 1
+            }, {
+                "label": "女生宿舍",
+                "value": 0
+            }],
             // 查询参数
             queryParams: {
                 pageNum: 1,
@@ -156,10 +185,10 @@ export default {
             // 表单参数
             form: {
                 id: '',
-                buildName: ''
+                buildName: '',
+                flag: '',
             },
-            // 表单校验
-            rules: {},
+
         };
     },
     watch: {
@@ -186,7 +215,6 @@ export default {
                 .catch(_ => {
                 });
         },
-        /** 查询学生信息列表 */
         getList() {
             buildList().then(response => {
 
@@ -208,6 +236,14 @@ export default {
                 }
                 this.total = response.data.data.total
                 this.buildList = response.data.data.resultList
+
+                this.buildList.forEach(i => {
+                    if (i.flag === '1') {
+                        i.flag = '男生宿舍楼'
+                    } else {
+                        i.flag = '女生宿舍楼'
+                    }
+                })
 
             })
         },
