@@ -175,17 +175,8 @@
                             <span style="font-size: 20px">指派受理</span>
                         </div>
                         <div>
-                            <el-form>
-                                <el-form-item>
-                                    <el-select v-model="hUser" placeholder="请选择维修人员"
-                                               clearable
-                                               :style="{width: '100%'}">
-                                        <el-option v-for="(item, index) in employeeList" :key="index" :label="item.name"
-                                                   :value="item.id" :disabled="item.disabled"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-form>
-                            <div slot="footer" class="dialog-footer">
+                            <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+                            <div slot="footer" class="dialog-footer" style="margin-top: 20px">
                                 <el-button type="primary" :disabled='roleIdentity' @click="submitForm">确定指派
                                 </el-button>
                             </div>
@@ -202,7 +193,7 @@
 
 <script>
 
-import {orderList, employeeList, sendEmployee, deleteOrder, complete} from "@/api/repairs/repairs";
+import {orderList, employeeList, sendEmployee, deleteOrder, complete, employeeTree} from "@/api/repairs/repairs";
 import drawer from "@/components/drawer.vue";
 
 export default {
@@ -211,6 +202,16 @@ export default {
     },
     data() {
         return {
+            defaultProps: {
+                children: 'children',
+                label: 'label'
+            },
+            data: [{
+                label: '',
+                children: [{
+                    label: ''
+                }]
+            }],
             sendFlag: false,
             completeFlag: false,
             display: false,
@@ -356,6 +357,20 @@ export default {
                 employeeList().then(response => {
                     this.employeeList = response.data
                 })
+
+                employeeTree().then(r => {
+
+                    this.data = r.data
+
+                    this.data.forEach(i=>{
+                        i.children.forEach(e=>{
+                            e.label = e.name
+                        })
+                    })
+
+                    console.log(this.data, "方法")
+
+                })
             });
 
 
@@ -415,6 +430,10 @@ export default {
 
             console.log(this.drawerParams, "抽屉")
 
+        },
+        handleNodeClick(data) {
+            console.log(data);
+            this.hUser = data.id
         },
         /** 提交按钮 */
         submitForm() {

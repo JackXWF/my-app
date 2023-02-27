@@ -89,6 +89,8 @@
             <el-table-column type="selection" width="55" align="center"/>
             <el-table-column label="学号" align="center" prop="stunumber"/>
             <el-table-column label="姓名" align="center" prop="name"/>
+            <el-table-column label="学院" align="center" prop="college"/>
+            <el-table-column label="班级" align="center" prop="grade"/>
             <el-table-column label="宿舍" align="center" prop="build"/>
             <el-table-column label="性别" align="center" prop="gender"/>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -130,6 +132,15 @@
                 </el-form-item>
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="form.name" placeholder="请输入姓名"/>
+                </el-form-item>
+                <el-form-item label="学院" prop="college">
+                    <el-select v-model="form.college" placeholder="请选择学院" clearable :style="{width: '100%'}">
+                        <el-option v-for="(item, index) in collegeOptions" :key="index" :label="item.label"
+                                   :value="item.value" :disabled="item.disabled"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="班级" prop="grade">
+                    <el-input v-model="form.grade" placeholder="请输入班级"/>
                 </el-form-item>
                 <el-form-item label="宿舍" prop="build">
                     <el-select v-model="form.build" placeholder="请选择宿舍" clearable
@@ -183,6 +194,31 @@ export default {
     name: "Student",
     data() {
         return {
+            collegeOptions: [{
+                "label": "计算机科学与技术",
+                "value": "计算机科学与技术"
+            }, {
+                "label": "马克思学院",
+                "value": "马克思学院"
+            }, {
+                "label": "数学学院",
+                "value": "数学学院"
+            }, {
+                "label": "文学院",
+                "value": "文学院"
+            }, {
+                "label": "外国语学院",
+                "value": "外国语学院"
+            }, {
+                "label": "体育学院",
+                "value": "体育学院"
+            }, {
+                "label": "生物学院",
+                "value": "生物学院"
+            }, {
+                "label": "化学学院",
+                "value": "化学学院"
+            }],
             excelUrl: '',
             disabled: false,
             // 遮罩层
@@ -232,6 +268,11 @@ export default {
                     message: '请输入姓名',
                     trigger: 'blur'
                 }],
+                grade: [{
+                    required: true,
+                    message: '请输入班级',
+                    trigger: 'blur'
+                }],
                 build: [{
                     required: true,
                     message: '请选择宿舍',
@@ -240,6 +281,11 @@ export default {
                 gender: [{
                     required: true,
                     message: '请选择性别',
+                    trigger: 'change'
+                }],
+                college: [{
+                    required: true,
+                    message: '请选择学院',
                     trigger: 'change'
                 }],
             },
@@ -317,7 +363,9 @@ export default {
                 stunumber: null,
                 name: null,
                 build: null,
-                gender: null
+                gender: null,
+                college: null,
+                grade: null
             };
             this.resetForm("form");
         },

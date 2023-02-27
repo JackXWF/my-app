@@ -24,3 +24,7 @@ export const deleteOrder = (id) => {
 export const complete = (params) => {
     return repairsHttp.post('repairs/complete',params)
 }
+
+export const employeeTree = () => {
+    return repairsHttp.get('repairs/employee/tree')
+}

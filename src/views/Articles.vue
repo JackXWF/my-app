@@ -300,7 +300,7 @@ export default {
                     this.open = false;
                     this.getList();
                 } else {
-                    this.$message.error("该菜品已存在,请勿重复添加!")
+                    this.$message.error("该物品已挂失,请勿重复添加!")
                 }
 
             });
