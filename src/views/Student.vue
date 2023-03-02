@@ -46,6 +46,7 @@
                     plain
                     icon="el-icon-plus"
                     size="mini"
+                    :disabled="roleFlog"
                     @click="handleAdd()"
                 >新增
                 </el-button>
@@ -65,6 +66,7 @@
                 <el-button
                     type="success"
                     plain
+                    :disabled="roleFlog"
                     icon="el-icon-upload2"
                     size="mini"
                     @click="handleImport"
@@ -75,10 +77,22 @@
                 <el-button
                     type="warning"
                     plain
+                    :disabled="roleFlog"
                     icon="el-icon-download"
                     size="mini"
                     @click="handleExport"
                 >导出
+                </el-button>
+            </el-col>
+            <el-col :span="1.5">
+                <el-button
+                    type="primary"
+                    plain
+                    :disabled="roleFlog"
+                    icon="el-icon-s-custom"
+                    size="mini"
+                    @click="allocation"
+                >分配宿舍
                 </el-button>
             </el-col>
             <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -99,6 +113,7 @@
                         size="mini"
                         type="text"
                         icon="el-icon-edit"
+                        :disabled="roleFlog"
                         @click="handleUpdate(scope.row)"
                         v-hasPermi="['student:student:edit']"
                     >修改
@@ -106,6 +121,7 @@
                     <el-button
                         size="mini"
                         type="text"
+                        :disabled="roleFlog"
                         icon="el-icon-delete"
                         @click="handleDelete(scope.row)"
                         v-hasPermi="['student:student:remove']"
@@ -188,7 +204,7 @@ import {
     exportStudent,
     importStudent
 } from "@/api";
-import {dormitoryList} from "@/api/dormitory/dormitory";
+import {dormitoryList,allocation} from "@/api/dormitory/dormitory";
 
 export default {
     name: "Student",
@@ -223,6 +239,7 @@ export default {
             disabled: false,
             // 遮罩层
             loading: true,
+            roleFlog: true,
             // 选中数组
             ids: [],
             // 非单个禁用
@@ -299,6 +316,10 @@ export default {
         };
     },
     created() {
+        const role = this.$session.get('userInfo').userRole
+        if(role === '0'){
+            this.roleFlog = false
+        }
         this.getList();
     },
     methods: {
@@ -405,7 +426,19 @@ export default {
             this.form.name = row.name
             this.disabled = true
             this.open = true;
+            this.form.college = row.college
+            this.form.grade = row.grade
 
+        },
+        allocation(){
+            allocation().then(r=>{
+                if(r.data.code === 200){
+                    this.$message.success("分配成功！")
+                    this.getList()
+                }else {
+                    this.$message.error("分配异常，请稍后从再试！")
+                }
+            })
         },
         /** 提交按钮 */
         submitForm() {
