@@ -2,7 +2,8 @@
     <div>
         <el-form ref="elForm" :model="formData" :rules="rules" size="medium" label-width="100px">
             <el-form-item label="学号" prop="number">
-                <el-input disabled="true" v-model="formData.number" placeholder="请输入学号" clearable :style="{width: '100%'}">
+                <el-input disabled="true" v-model="formData.number" placeholder="请输入学号" clearable
+                          :style="{width: '100%'}">
                 </el-input>
             </el-form-item>
             <el-form-item label="早起习惯" prop="early">
@@ -50,19 +51,44 @@
             </el-form-item>
             <el-form-item size="large">
                 <el-button type="primary" @click="submitForm">提交</el-button>
+                <el-button type="primary" @click="onOpen">自选宿舍</el-button>
                 <el-button @click="resetForm">重置</el-button>
+
             </el-form-item>
         </el-form>
+
+        <el-dialog v-bind="$attrs" v-on="$listeners" :visible.sync="open" @close="onClose" title="选择宿舍">
+            <el-form ref="dor" :model="dor" :rules="rules2" size="medium" label-width="100px">
+                <el-form-item label="宿舍" prop="dormitoryId">
+                    <el-select v-model="dor.dormitoryId" placeholder="请选择宿舍" clearable :style="{width: '100%'}">
+                        <el-option v-for="(item, index) in dormitoryList" :key="index" :label="item.dormitory"
+                                   :value="item.dormitoryId" :disabled="item.disabled"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer">
+                <el-button @click="close">取消</el-button>
+                <el-button type="primary" @click="handleConfirm">确定</el-button>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 <script>
-import {insertSurvey} from "@/api/dormitory/dormitory";
+import {insertSurvey, dormitoryList, optional} from "@/api/dormitory/dormitory";
+import repairsHttp from "@/utils/repairs";
+import el from "element-ui/src/locale/lang/el";
 
 export default {
     components: {},
     props: [],
     data() {
         return {
+            open: false,
+            dor: {
+                dormitoryId: undefined,
+                stuNumber:''
+            },
             formData: {
                 number: undefined,
                 early: undefined,
@@ -73,6 +99,7 @@ export default {
                 disposition: undefined,
                 address: undefined,
             },
+            dormitoryList: [],
             rules: {
                 number: [{
                     required: true,
@@ -112,6 +139,14 @@ export default {
                 address: [{
                     required: true,
                     message: '请选择室友来自',
+                    trigger: 'change'
+                }],
+
+            },
+            rules2:{
+                dormitoryId: [{
+                    required: true,
+                    message: '请选择宿舍',
                     trigger: 'change'
                 }],
             },
@@ -175,6 +210,26 @@ export default {
     computed: {},
     watch: {},
     created() {
+        dormitoryList().then(response => {
+            this.dormitoryList = response.data.data
+            console.log(this.dormitoryList, "宿舍列表")
+
+            const gender = this.$session.get('userInfo').gender
+
+            const result = [];
+
+            this.dormitoryList.forEach(i => {
+                if (i.flag === gender) {
+                    result.push(i)
+                }
+            })
+
+            console.log(result, "拉开进攻")
+            this.dormitoryList = result
+
+        })
+
+
     },
     mounted() {
 
@@ -182,12 +237,12 @@ export default {
     },
     methods: {
         submitForm() {
-            console.log(this.formData,"表单")
+            console.log(this.formData, "表单")
             this.$refs['elForm'].validate(valid => {
                 if (!valid) return
                 // TODO 提交表单
                 insertSurvey(this.formData).then(r => {
-                    console.log(r.data.code,"烦烦烦")
+                    console.log(r.data.code, "烦烦烦")
                     if (r.data.code === 200) {
                         this.$message.success("提交成功，谢谢您的配合!")
                         this.resetForm()
@@ -199,6 +254,35 @@ export default {
         },
         resetForm() {
             this.$refs['elForm'].resetFields()
+        },
+        handleConfirm() {
+            this.$refs['dor'].validate(valid => {
+                if (!valid) return
+
+                this.dor.stuNumber = this.$session.get('userInfo').userName
+                console.log(this.dor,"方法")
+
+                optional(this.dor).then(r=>{
+                    if(r.data.code === 200){
+                        console.log(r.data,"斤斤计较")
+                        this.$message.success(r.data.data)
+                    }else {
+                        this.$message.error(r.data.msg)
+                    }
+
+
+                })
+
+            })
+        },
+        onOpen() {
+            this.open = true
+        },
+        onClose() {
+            this.$refs['dor'].resetFields()
+        },
+        close() {
+            this.open = false
         },
     }
 }

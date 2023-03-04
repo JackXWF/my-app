@@ -36,4 +36,21 @@ export const allocation = () => {
     return dormitoryHttp.get('/survey/test')
 }
 
+export const optional = (data) => {
+    return dormitoryHttp.post('/building/optional', data)
+}
+
+export const checkList = (data) => {
+    return dormitoryHttp.post('/building/checkList', data)
+}
+
+export const confirm = (data) => {
+    return dormitoryHttp.post('/check/confirm',data)
+}
+
+export const check = (data) => {
+    return dormitoryHttp.post('/check/check',data)
+}
+
+
 
