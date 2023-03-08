@@ -65,6 +65,11 @@
                                    :value="item.dormitoryId" :disabled="item.disabled"></el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="申请原因" prop="reason">
+                    <el-input v-model="dor.reason" type="textarea" placeholder="请填写申请原因" :maxlength="500"
+                              show-word-limit :autosize="{minRows: 4, maxRows: 4}"
+                              :style="{width: '100%'}"></el-input>
+                </el-form-item>
             </el-form>
             <div slot="footer">
                 <el-button @click="close">取消</el-button>
@@ -87,7 +92,8 @@ export default {
             open: false,
             dor: {
                 dormitoryId: undefined,
-                stuNumber:''
+                stuNumber: '',
+                reason: ''
             },
             formData: {
                 number: undefined,
@@ -143,11 +149,16 @@ export default {
                 }],
 
             },
-            rules2:{
+            rules2: {
                 dormitoryId: [{
                     required: true,
                     message: '请选择宿舍',
                     trigger: 'change'
+                }],
+                reason: [{
+                    required: true,
+                    message: '请填写原因',
+                    trigger: 'blur'
                 }],
             },
             field102Options: [{
@@ -245,7 +256,7 @@ export default {
                     console.log(r.data.code, "烦烦烦")
                     if (r.data.code === 200) {
                         this.$message.success("提交成功，谢谢您的配合!")
-                        this.resetForm()
+                        this.open = false
                     } else {
                         this.$message.error(r.data.msg)
                     }
@@ -260,13 +271,14 @@ export default {
                 if (!valid) return
 
                 this.dor.stuNumber = this.$session.get('userInfo').userName
-                console.log(this.dor,"方法")
+                console.log(this.dor, "方法")
 
-                optional(this.dor).then(r=>{
-                    if(r.data.code === 200){
-                        console.log(r.data,"斤斤计较")
+                optional(this.dor).then(r => {
+                    if (r.data.code === 200) {
+                        console.log(r.data, "斤斤计较")
                         this.$message.success(r.data.data)
-                    }else {
+                        this.open = false
+                    } else {
                         this.$message.error(r.data.msg)
                     }
 

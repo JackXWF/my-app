@@ -74,6 +74,7 @@
             <el-table-column label="学院" align="center" prop="college"/>
             <el-table-column label="班级" align="center" prop="grade"/>
             <el-table-column label="宿舍" align="center" prop="dormitory"/>
+            <el-table-column label="申请原因" align="center" prop="reason"/>
             <el-table-column label="性别" align="center" prop="gender"/>
             <el-table-column label="审核人" align="center" prop="checkName"/>
             <el-table-column label="确认人" align="center" prop="confirmName"/>
@@ -287,6 +288,10 @@ export default {
 
                     if(i.state === 3){
                         i.state = '未通过'
+                    }
+
+                    if(i.dormitory == '0'){
+                        i.dormitory = '暂未分配'
                     }
 
                 })

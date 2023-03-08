@@ -58,3 +58,16 @@ export const exportStudent = () =>{
 export const importStudent = (params) =>{
     return http.post('/student/import',params)
 }
+
+export const userList = (params) =>{
+    return http.post('/user/list',params)
+}
+
+export const enable = (id) =>{
+    return http.get('/user/enable/'+id)
+}
+
+
+export const disable = (id) =>{
+    return http.get('/user/disable/'+id)
+}

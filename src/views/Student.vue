@@ -361,6 +361,10 @@ export default {
                     } else {
                         item.gender = '女'
                     }
+
+                    if(item.build=='0'){
+                        item.build = '暂未分配'
+                    }
                 })
 
                 this.studentList = gender;
