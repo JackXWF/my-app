@@ -138,18 +138,18 @@ export default {
                     if (r.data.code != 200) {
 
 
-                    this.flag++;
-                    if (this.flag >= 3) {
-                        this.$message.error("您输入密码已错误超过三次,如忘记密码请联系管理员:2933203540@qq.com")
+                        this.flag++;
+                        if (this.flag >= 3) {
+                            this.$message.error("您输入密码已错误超过三次,如忘记密码请联系管理员:2933203540@qq.com")
 
-                    }else {
-                        this.$message.error("原密码错误,请重新输入!")
-                    }
+                        } else {
+                            this.$message.error("原密码错误,请重新输入!")
+                        }
 
 
-                    return;
+                        return;
 
-                    }else {
+                    } else {
                         this.$message.success("修改成功!")
                         this.onClose();
                         this.dialogVisible = false
