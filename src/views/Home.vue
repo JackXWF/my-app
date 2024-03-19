@@ -36,10 +36,10 @@
                         </el-row>
                     </div>
                 </div>
-                <iframe scrolling="no" src="https://tianqiapi.com/api.php?style=ya&skin=durian"
+                <iframe scrolling="no" src="https://widget.tianqiapi.com/?style=tw&skin=durian&color=&align=&paddingtop=&fontsize="
                         style="margin-right: 100px" frameborder="0" width="320" height="200"
                         allowtransparency="true"></iframe>
-                <img src="@/assets/dashboard.png" class="gva-top-card-right" alt>
+                <img src="@/assets/别墅.png" class="gva-top-card-right" alt>
             </div>
         </div>
         <div class="gva-card-box" v-show="divShow">
