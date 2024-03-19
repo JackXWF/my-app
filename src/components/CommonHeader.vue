@@ -12,7 +12,6 @@
 
 
             </el-breadcrumb>
-
         </div>
 
         <div class="r-content">
