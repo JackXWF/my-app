@@ -220,89 +220,79 @@ export default {
         },
         /** 查询学生信息列表 */
         getList() {
-
             checkList(this.queryParams).then(response => {
                 console.log(response.data, "看就看")
-                if (response.data.data === null) {
-                    this.studentList = null
+
+                // 如果 response.data.data 为 null，直接返回
+                if (!response.data.data) {
+                    this.studentList = [];
+                    this.total = 0;
+                    return;
                 }
 
-                this.total = response.data.data.total
+                this.total = response.data.data.total;
 
-                const gender = response.data.data.resultList
-
+                const gender = response.data.data.resultList;
                 gender.forEach(item => {
                     if (item.gender == 1) {
-                        item.gender = '男'
+                        item.gender = '男';
                     } else {
-                        item.gender = '女'
+                        item.gender = '女';
                     }
-
-
-
-
-                })
+                });
 
                 this.studentList = gender;
+                console.log(this.studentList, "列表");
 
-                console.log(this.studentList, "列表")
+                console.log(this.role, "江河湖海");
 
-                console.log(this.role, "江河湖海")
+                const list = [];
 
-                const list =[];
-
-                this.studentList.forEach(i=>{
-                    if(this.role.userRole === '0'){
-                        if(i.state === 1){
-                            list.push(i)
+                this.studentList.forEach(i => {
+                    if (this.role.userRole === '0') {
+                        if (i.state === 1) {
+                            list.push(i);
                         }
                     }
 
-                    if(this.role.userRole === '1'){
-                        if(i.state === 0){
-                            list.push(i)
+                    if (this.role.userRole === '1') {
+                        if (i.state === 0) {
+                            list.push(i);
                         }
                     }
 
-                    if(this.role.userRole === '4'){
-                        if(i.stunumber == this.role.userName){
-                            list.push(i)
+                    if (this.role.userRole === '4') {
+                        if (i.stunumber == this.role.userName) {
+                            list.push(i);
                         }
                     }
-                })
+                });
 
-
-                list.forEach(i=>{
-                    if(i.state === 0){
-                        i.state = '未审核'
+                list.forEach(i => {
+                    if (i.state === 0) {
+                        i.state = '未审核';
                     }
 
-                    if(i.state === 1){
-                        i.state = '待系统管理员审核'
+                    if (i.state === 1) {
+                        i.state = '待系统管理员审核';
                     }
 
-
-                    if(i.state === 2){
-                        i.state = '已通过'
+                    if (i.state === 2) {
+                        i.state = '已通过';
                     }
 
-                    if(i.state === 3){
-                        i.state = '未通过'
+                    if (i.state === 3) {
+                        i.state = '未通过';
                     }
 
-                    if(i.dormitory == '0'){
-                        i.dormitory = '暂未分配'
+                    if (i.dormitory == '0') {
+                        i.dormitory = '暂未分配';
                     }
+                });
 
-                })
-
-                this.studentList = list
-
-
-                console.log(this.studentList, "列表dd")
-
+                this.studentList = list;
+                console.log(this.studentList, "列表dd");
             });
-
         },
         // 取消按钮
         cancel() {

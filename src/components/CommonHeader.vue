@@ -18,7 +18,7 @@
         <div class="r-content">
             <el-dropdown @command="handleClick">
                 <span class="el-dropdown-link">
-                    <img class="user" src="../assets/images/user-deafult-head-picture.png" alt="头像"/>
+                    <img class="user" src="../assets/images/avatar35.png" alt="头像"/>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="updatePass">修改密码</el-dropdown-item>

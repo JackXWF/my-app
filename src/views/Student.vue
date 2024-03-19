@@ -132,12 +132,13 @@
         </el-table>
 
         <pagination class="stu-pagination"
-                    v-show="total>0"
+                    v-show="total && total > 0"
                     :total="total"
                     :page.sync="queryParams.pageNum"
                     :limit.sync="queryParams.pageSize"
                     @pagination="getList"
         />
+
 
         <!-- 添加或修改学生信息对话框 -->
         <el-dialog :title="title" :visible.sync="open" width="500px">
@@ -510,14 +511,12 @@ export default {
             exportStudent().then(r => {
                 if (r.data.code === 200) {
                 }
-                this.$message.success("已成功导出到D盘!")
+                this.$message.success("已成功导出到E盘!")
             })
         },
         handleImport() {
             this.openExcel = true
             this.excelUrl = "http://localhost:8086/student/import"
-
-
         },
         handleAvatarSuccess() {
             this.$message.success("批量导入成功!");

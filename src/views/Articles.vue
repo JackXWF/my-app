@@ -53,6 +53,19 @@
             <el-table-column label="联系电话" align="center" prop="pickPhone"/>
             <el-table-column label="拾到时间" align="center" prop="pickTime"/>
             <el-table-column label="添加时间" align="center" prop="addtime"/>
+            <el-table-column label="状态" align="center" prop="state"/>
+            <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                <template slot-scope="scope">
+                    <el-button
+                        size="mini"
+                        type="text"
+                        :disabled="scope.row.flag"
+                        icon="el-icon-edit"
+                        @click="update(scope.row.id)"
+                    >已领取
+                    </el-button>
+                </template>
+            </el-table-column>
         </el-table>
 
         <pagination class="stu-pagination"
@@ -117,12 +130,13 @@
 
 <script>
 
-import {add,list} from "@/api/articles/articles";
+import {add, list, updateState} from "@/api/articles/articles";
 
 export default {
     name: "Student",
     data() {
         return {
+            getFlag: true,
             roleIdentity: true,
             urlPath: '',
             imageUrl: '',
@@ -232,22 +246,37 @@ export default {
         },
 
         getList() {
-            this.roleName = this.$session.get('userInfo').userName
+            this.roleName = this.$session.get('userInfo').userName;
 
-
-            console.log(this.queryParams,"了很快改变")
-            list(this.queryParams).then(response=>{
-                console.log(response,"尽管当时天津海关")
-                if(response.data.data === null){
-                    this.articlesList = null;
+            list(this.queryParams).then(response => {
+                if (!response.data.data) {
+                    this.articlesList = [];
+                    this.total = 0;
+                    return;
                 }
 
-                this.articlesList = response.data.data.resultList
-                this.total = response.data.data.total
-            })
+                const change = response.data.data.resultList;
+                change.forEach(e => {
+                    if (this.roleName == e.pickUser && e.state == 0) {
+                        e.flag = false;
+                    } else {
+                        e.flag = true;
+                    }
 
+                    if (e.state == 0) {
+                        e.state = '未领取';
+                    } else {
+                        e.state = '已领取';
+                    }
+                });
 
+                console.log(change, "方法");
+
+                this.articlesList = change;
+                this.total = response.data.data.total;
+            });
         },
+
         // 取消按钮
         cancel() {
             this.open = false;
@@ -285,6 +314,11 @@ export default {
             this.title = "添加丢失物品信息";
 
         },
+        update(id) {
+            updateState(id)
+            this.getList()
+        }
+        ,
         /** 提交按钮 */
         submitForm() {
 
@@ -333,7 +367,7 @@ export default {
             }
             return isJPG && isLt2M;
         },
-        formatLongDate (date) {
+        formatLongDate(date) {
             let myyear = date.getFullYear();
             let mymonth = date.getMonth() + 1;
             let myweekday = date.getDate();

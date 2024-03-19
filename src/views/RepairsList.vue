@@ -164,8 +164,6 @@
                             <el-button type="primary" @click="completeRepair" :disabled='completeFlag'>已完成维修
                             </el-button>
                         </div>
-
-
                     </el-card>
                 </el-col>
                 <el-col :span="8">
@@ -187,6 +185,24 @@
             </el-row>
 
         </drawer>
+
+        <div class="gva-card-box" v-show="chartsFlag">
+            <div class="gva-card">
+                <div class="card-header">
+                    <span>数据统计</span>
+                </div>
+                <div class="echart-box">
+                    <el-row :gutter="20">
+                        <el-col :xs="24" :sm="12">
+                            <echarts-line/>
+                        </el-col>
+                        <el-col :xs="24" :sm="12">
+                            <echarts-line2/>
+                        </el-col>
+                    </el-row>
+                </div>
+            </div>
+        </div>
     </div>
 
 </template>
@@ -195,13 +211,18 @@
 
 import {orderList, employeeList, sendEmployee, deleteOrder, complete, employeeTree} from "@/api/repairs/repairs";
 import drawer from "@/components/drawer.vue";
+import echartsLine from "@/components/echarts/echartsLine.vue";
+import echartsLine2 from "@/components/echarts/echartsLine2.vue";
 
 export default {
     components: {
-        drawer
+        drawer,
+        echartsLine,
+        echartsLine2
     },
     data() {
         return {
+            chartsFlag: false,
             defaultProps: {
                 children: 'children',
                 label: 'label'
@@ -290,6 +311,11 @@ export default {
     },
     created() {
         this.getList();
+
+        const role = this.$session.get('userInfo').userRole
+        if (role == '0') {
+            this.chartsFlag = true
+        }
     },
     methods: {
         handleClose(done) {
@@ -301,79 +327,74 @@ export default {
                 });
         },
         getList() {
-            console.log("参数")
+            console.log("参数");
 
             //判断当前角色
-            const role = this.$session.get('userInfo').userRole
+            const role = this.$session.get('userInfo').userRole;
             if (role === '0') {
-                this.roleIdentity = false
-                this.completeFlag = true
+                this.roleIdentity = false;
+                this.completeFlag = true;
             } else if (role === '4') {
-                this.queryParams.params.initUser = this.$session.get('userInfo').userName
-                this.completeFlag = true
+                this.queryParams.params.initUser = this.$session.get('userInfo').userName;
+                this.completeFlag = true;
             } else if (role === '6') {
-                this.queryParams.params.handleUserId = this.$session.get('userInfo').userName
-                this.completeFlag = false
+                this.queryParams.params.handleUserId = this.$session.get('userInfo').userName;
+                this.completeFlag = false;
             } else {
-                this.completeFlag = true
+                this.completeFlag = true;
             }
 
-
-            console.log(this.queryParams, "查询")
+            console.log(this.queryParams, "查询");
             orderList(this.queryParams).then(response => {
-                console.log(response.data, "返回")
-                if (response.data.data === null) {
-                    this.repairsList = null
+                console.log(response.data, "返回");
+
+                // 如果 response.data.data 为 null，直接返回
+                if (!response.data.data) {
+                    this.repairsList = [];
+                    this.total = 0;
+                    return;
                 }
 
                 const list = response.data.data.resultList;
 
                 list.forEach(item => {
                     if (item.state === '0') {
-                        item.state = '未处理'
+                        item.state = '未处理';
                     } else if (item.state === '1') {
-                        item.state = '处理中'
+                        item.state = '处理中';
                     } else if (item.state === '2') {
-                        item.state = '已处理'
-
+                        item.state = '已处理';
                     }
 
-                    const imageTest = []
+                    const imageTest = [];
 
                     item.images.forEach(i => {
                         i = 'http://127.0.0.1:8088/repairsImage/' + i;
-                        imageTest.push(i)
-                    })
+                        imageTest.push(i);
+                    });
 
-                    item.images = imageTest
+                    item.images = imageTest;
+                });
 
-                })
-
-
-                this.total = response.data.data.total
-
-                this.repairsList = list
+                this.total = response.data.data.total;
+                this.repairsList = list;
 
                 employeeList().then(response => {
-                    this.employeeList = response.data
-                })
+                    this.employeeList = response.data;
+                });
 
                 employeeTree().then(r => {
+                    this.data = r.data;
 
-                    this.data = r.data
+                    this.data.forEach(i => {
+                        i.children.forEach(e => {
+                            e.label = e.name;
+                        });
+                    });
 
-                    this.data.forEach(i=>{
-                        i.children.forEach(e=>{
-                            e.label = e.name
-                        })
-                    })
-
-                    console.log(this.data, "方法")
-
-                })
+                    console.log(this.data, "方法");
+                });
             });
-
-
         },
         // 取消按钮
         cancel() {

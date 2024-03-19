@@ -1,4 +1,5 @@
 import canteenHttp from "@/utils/canteen";
+import http from "@/utils/request";
 
 
 export const employeeList = (params) => {
@@ -54,4 +55,14 @@ export const updateDish = (params) => {
 
 export const removeDish = (dishNumber) => {
     return canteenHttp.delete('/dish/removeDish/' + dishNumber)
+}
+
+
+export const importEmp = (file) => {
+    return canteenHttp.post('/employee/import', file)
+}
+
+
+export const exportEmp = () => {
+    return canteenHttp.get('/employee/export')
 }

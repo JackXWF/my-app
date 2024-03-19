@@ -87,7 +87,7 @@ export default {
 
 <style lang="less" scoped>
 #login {
-    background: url("../assets/images/background.jpg");
+    background: url("../assets/images/background3.jpg");
     width: 100%;
     height: 100%;
     position: fixed;

@@ -28,3 +28,8 @@ export const complete = (params) => {
 export const employeeTree = () => {
     return repairsHttp.get('repairs/employee/tree')
 }
+
+
+export const typeCharts = (flag) => {
+    return repairsHttp.get('repairs/charts?flag='+flag)
+}
