@@ -322,9 +322,9 @@ export default {
         handleDelete(row) {
             const stuNumbers = row.stunumber || this.ids;
 
-            if(this.ids.length>0){
+            if (this.ids.length > 0) {
                 this.value.studentList = stuNumbers
-            }else {
+            } else {
                 this.value.studentList.push(stuNumbers)
             }
 
@@ -348,11 +348,11 @@ export default {
         handleCheck(row) {
             const stuNumbers = row.stunumber || this.ids;
 
-            console.log(stuNumbers,"fjngkdsfjkgsn")
+            console.log(stuNumbers, "fjngkdsfjkgsn")
 
-            if(this.ids.length>0){
+            if (this.ids.length > 0) {
                 this.value.studentList = stuNumbers
-            }else {
+            } else {
                 this.value.studentList.push(stuNumbers)
             }
 
@@ -376,9 +376,9 @@ export default {
         handleNotConfirm(row) {
             const stuNumbers = row.stunumber || this.ids;
 
-            if(this.ids.length>0){
+            if (this.ids.length > 0) {
                 this.value.studentList = stuNumbers
-            }else {
+            } else {
                 this.value.studentList.push(stuNumbers)
             }
 
@@ -402,11 +402,11 @@ export default {
         handleConfirm(row) {
             const stuNumbers = row.stunumber || this.ids;
 
-            console.log(stuNumbers,"fjngkdsfjkgsn")
+            console.log(stuNumbers, "fjngkdsfjkgsn")
 
-            if(this.ids.length>0){
+            if (this.ids.length > 0) {
                 this.value.studentList = stuNumbers
-            }else {
+            } else {
                 this.value.studentList.push(stuNumbers)
             }
 
