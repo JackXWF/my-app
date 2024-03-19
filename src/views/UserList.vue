@@ -30,7 +30,7 @@
             <el-table-column type="selection" width="55" align="center"/>
             <el-table-column label="工号" align="center" prop="userName"/>
             <el-table-column label="姓名" align="center" prop="name"/>
-            <el-table-column label="角色" align="center" prop="name"/>
+            <el-table-column label="角色" align="center" prop="userRole"/>
             <el-table-column label="性别" align="center" prop="gender"/>
             <el-table-column label="状态" align="center" prop="state"/>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -134,15 +134,39 @@ export default {
 
                 this.total = response.data.data.total
 
+                const changeDate = response.data.data.resultList
+
+                changeDate.forEach(e=>{
+                    if(e.userRole == '0'){
+                        e.userRole = "系统管理员"
+                    }
+                    if(e.userRole == '1'){
+                        e.userRole = "宿舍管理员"
+                    }
+
+                    if(e.userRole == '2'){
+                        e.userRole = "食堂管理员"
+                    }
+
+                    if(e.userRole == '4'){
+                        e.userRole = "学生"
+                    }
+
+                    if(e.userRole == '6'){
+                        e.userRole = "维修员工"
+                    }
+
+                })
+
                 this.studentList = response.data.data.resultList
 
 
             });
 
-            dormitoryList().then(response => {
-                this.dormitoryList = response.data.data
-                console.log(this.dormitoryList, "宿舍列表")
-            })
+            /*  dormitoryList().then(response => {
+                  this.dormitoryList = response.data.data
+                  console.log(this.dormitoryList, "宿舍列表")
+              })*/
         },
         // 取消按钮
         cancel() {
@@ -174,9 +198,9 @@ export default {
 
         /** 修改按钮操作 */
         handleUpdate(row) {
-            console.log(row.id,"空间看看看看")
-            enable(row.id).then(r=>{
-                if(r.data.code === 200){
+            console.log(row.id, "空间看看看看")
+            enable(row.id).then(r => {
+                if (r.data.code === 200) {
                     this.$message.success("启用成功")
                 }
             })
@@ -184,8 +208,8 @@ export default {
             this.getList()
         },
         handleDisable(row) {
-            disable(row.id).then(r=>{
-                if(r.data.code === 200){
+            disable(row.id).then(r => {
+                if (r.data.code === 200) {
                     this.$message.error("已停用")
                 }
             })
