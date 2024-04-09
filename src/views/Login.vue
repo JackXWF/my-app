@@ -21,7 +21,7 @@
             :modal="false"
         >
             <el-form :model="resetForm" :rules="resetRules" ref="resetForm">
-                <el-form-item label="新密码" prop="newPassword">
+                <el-form-item label="新密码" prop="newPass">
                     <el-input v-model="resetForm.newPass" type="password"></el-input>
                 </el-form-item>
                 <el-form-item label="确认密码" prop="confirmPassword">
@@ -29,6 +29,9 @@
                 </el-form-item>
                 <el-form-item label="邮件地址" prop="email">
                     <el-input v-model="resetForm.email" type="email"></el-input>
+                </el-form-item>
+                <el-form-item label="验证码" prop="code">
+                    <el-input v-model="resetForm.code" type="number"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <div class="button-container">
@@ -58,7 +61,8 @@ export default {
                 confirmPassword: '',
                 email: '',
                 id: '',
-                oldPass: ''
+                oldPass: '',
+                code: ''
             },
             rules: {
                 userName: [
@@ -78,6 +82,9 @@ export default {
                 email: [
                     {required: true, trigger: 'blur', message: '请输入邮件地址'},
                     {type: 'email', message: '请输入有效的邮件地址', trigger: ['blur', 'change']}
+                ],
+                code: [
+                    {required: true, trigger: 'blur', message: '请输入验证码'}
                 ]
             }
         };
