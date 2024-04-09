@@ -13,6 +13,30 @@
             <el-button style="margin-left: 139px;margin-top: 10px;font-size: 18px" type="info" @click="forget">忘记
             </el-button>
         </el-form>
+
+        <el-dialog
+            title="重置密码"
+            :visible.sync="dialogVisible"
+            width="30%"
+            :modal="false"
+        >
+            <el-form :model="resetForm" :rules="resetRules" ref="resetForm">
+                <el-form-item label="新密码" prop="newPassword">
+                    <el-input v-model="resetForm.newPassword" type="password"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="confirmPassword">
+                    <el-input v-model="resetForm.confirmPassword" type="password"></el-input>
+                </el-form-item>
+                <el-form-item label="邮件地址" prop="email">
+                    <el-input v-model="resetForm.email" type="email"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitResetForm" style="display: flex;justify-content: center">
+                        提交
+                    </el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
     </div>
 
 </template>
@@ -24,10 +48,15 @@ import Cookie from 'js-cookie'
 export default {
     data() {
         return {
-            flag: 0,
+            dialogVisible: false,
             form: {
                 userName: '',
                 userPassword: ''
+            },
+            resetForm: {
+                newPassword: '',
+                confirmPassword: '',
+                email: ''
             },
             rules: {
                 userName: [
@@ -36,9 +65,20 @@ export default {
                 userPassword: [
                     {required: true, trigger: 'blur', message: '请输入密码'}
                 ],
+            },
+            resetRules: {
+                newPassword: [
+                    {required: true, trigger: 'blur', message: '请输入新密码'}
+                ],
+                confirmPassword: [
+                    {required: true, trigger: 'blur', message: '请确认新密码', validator: this.matchPassword}
+                ],
+                email: [
+                    {required: true, trigger: 'blur', message: '请输入邮件地址'},
+                    {type: 'email', message: '请输入有效的邮件地址', trigger: ['blur', 'change']}
+                ]
             }
-
-        }
+        };
     },
     methods: {
         forget() {
@@ -66,20 +106,33 @@ export default {
                                 type: 'success'
                             });
                             this.$router.push('/home')
-                        } else {
-                            this.flag++;
-                            if (this.flag >= 3) {
-                                this.$message.error("您输入密码已错误超过三次,如忘记密码请联系管理员:2933203540@qq.com")
-                            } else {
-                                this.$message.error(data.msg)
-                            }
-
+                        } else if (data.code === 500) {
+                            this.$message.error(data.msg)
+                        } else if (data.code === 1000) {
+                            this.dialogVisible = true;
                         }
                     })
                 }
             })
-
-
+        },
+        submitResetForm() {
+            this.$refs.resetForm.validate((valid) => {
+                if (valid) {
+                    // 在这里执行重置密码的逻辑
+                    console.log('重置密码表单数据:', this.resetForm);
+                    // 重置成功后
+                    this.dialogVisible = false;
+                }
+            });
+        },
+        matchPassword(rule, value, callback) {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.resetForm.newPassword) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
         }
     }
 }
