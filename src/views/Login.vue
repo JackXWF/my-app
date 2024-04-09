@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import {login} from '../api'
+import {login, setOnePass} from '../api'
 import Cookie from 'js-cookie'
 
 export default {
@@ -112,6 +112,7 @@ export default {
                             this.$message.error(data.msg)
                         } else if (data.code === 1000) {
                             this.resetForm.oldPass = this.form.userPassword
+                            this.resetForm.id = this.form.userName
                             this.$message.error(data.msg)
                             this.dialogVisible = true;
                         }
@@ -125,13 +126,17 @@ export default {
                     // 在这里执行重置密码的逻辑
                     console.log('重置密码表单数据:', this.resetForm);
                     console.log(this.resetForm.oldPass)
-                    if(this.resetForm.oldPass === this.resetForm.newPass){
+                    if (this.resetForm.oldPass === this.resetForm.newPass) {
                         this.$message.error("新密码不能和旧密码相同！")
-                    }else {
+                    } else {
+                        setOnePass(this.resetForm).then(({data}) => {
+                            this.$message.success("hello")
+                        })
+
+
                         // 重置成功后
                         this.dialogVisible = false;
                     }
-
 
 
                 }

@@ -71,3 +71,7 @@ export const enable = (id) =>{
 export const disable = (id) =>{
     return http.get('/user/disable/'+id)
 }
+
+export const setOnePass = (params) =>{
+    return http.post('/user/updatePassOne',params)
+}
