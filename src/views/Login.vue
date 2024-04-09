@@ -22,7 +22,7 @@
         >
             <el-form :model="resetForm" :rules="resetRules" ref="resetForm">
                 <el-form-item label="新密码" prop="newPassword">
-                    <el-input v-model="resetForm.newPassword" type="password"></el-input>
+                    <el-input v-model="resetForm.newPass" type="password"></el-input>
                 </el-form-item>
                 <el-form-item label="确认密码" prop="confirmPassword">
                     <el-input v-model="resetForm.confirmPassword" type="password"></el-input>
@@ -31,9 +31,9 @@
                     <el-input v-model="resetForm.email" type="email"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitResetForm" style="display: flex;justify-content: center">
-                        提交
-                    </el-button>
+                    <div class="button-container">
+                        <el-button type="primary" @click="submitResetForm">提交</el-button>
+                    </div>
                 </el-form-item>
             </el-form>
         </el-dialog>
@@ -54,9 +54,11 @@ export default {
                 userPassword: ''
             },
             resetForm: {
-                newPassword: '',
+                newPass: '',
                 confirmPassword: '',
-                email: ''
+                email: '',
+                id: '',
+                oldPass: ''
             },
             rules: {
                 userName: [
@@ -67,7 +69,7 @@ export default {
                 ],
             },
             resetRules: {
-                newPassword: [
+                newPass: [
                     {required: true, trigger: 'blur', message: '请输入新密码'}
                 ],
                 confirmPassword: [
@@ -109,6 +111,8 @@ export default {
                         } else if (data.code === 500) {
                             this.$message.error(data.msg)
                         } else if (data.code === 1000) {
+                            this.resetForm.oldPass = this.form.userPassword
+                            this.$message.error(data.msg)
                             this.dialogVisible = true;
                         }
                     })
@@ -120,15 +124,23 @@ export default {
                 if (valid) {
                     // 在这里执行重置密码的逻辑
                     console.log('重置密码表单数据:', this.resetForm);
-                    // 重置成功后
-                    this.dialogVisible = false;
+                    console.log(this.resetForm.oldPass)
+                    if(this.resetForm.oldPass === this.resetForm.newPass){
+                        this.$message.error("新密码不能和旧密码相同！")
+                    }else {
+                        // 重置成功后
+                        this.dialogVisible = false;
+                    }
+
+
+
                 }
             });
         },
         matchPassword(rule, value, callback) {
             if (value === '') {
                 callback(new Error('请再次输入密码'));
-            } else if (value !== this.resetForm.newPassword) {
+            } else if (value !== this.resetForm.newPass) {
                 callback(new Error('两次输入密码不一致!'));
             } else {
                 callback();
@@ -168,5 +180,10 @@ export default {
     .el-input {
         width: 300px;
     }
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
 }
 </style>
