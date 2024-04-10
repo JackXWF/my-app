@@ -10,7 +10,7 @@
             </el-form-item>
             <el-button style="margin-left: 75px;margin-top: 10px;font-size: 18px" type="primary" @click="submit">登录
             </el-button>
-            <el-button style="margin-left: 139px;margin-top: 10px;font-size: 18px" type="info" @click="forget">忘记
+            <el-button style="margin-left: 139px;margin-top: 10px;font-size: 18px" type="info" @click="forget">找回
             </el-button>
         </el-form>
 

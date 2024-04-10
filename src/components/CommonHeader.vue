@@ -185,7 +185,7 @@ export default {
 <style lang="less" scoped>
 .header-container {
     padding: 0 20px;
-    background-color: #333;
+    background-color: #003a79;
     height: 60px;
     display: flex;
     justify-content: space-between;
