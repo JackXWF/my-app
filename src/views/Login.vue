@@ -30,7 +30,7 @@
                 <el-form-item label="确认密码" prop="confirmPassword">
                     <el-input v-model="resetForm.confirmPassword" type="password"></el-input>
                 </el-form-item>
-                <el-form-item label="邮件地址" prop="email">
+                <el-form-item label="QQ邮件地址" prop="email">
                     <el-input v-model="resetForm.email" type="email"></el-input>
                 </el-form-item>
                 <el-form-item label="验证码" prop="code">
@@ -92,8 +92,8 @@ export default {
                     {required: true, trigger: 'blur', message: '请确认新密码', validator: this.matchPassword}
                 ],
                 email: [
-                    {required: true, trigger: 'blur', message: '请输入邮件地址'},
-                    {type: 'email', message: '请输入有效的邮件地址', trigger: ['blur', 'change']}
+                    {required: true, trigger: 'blur', message: '请输入QQ邮件地址'},
+                    {type: 'email', message: '请输入有效的QQ邮件地址', trigger: ['blur', 'change']}
                 ],
                 code: [
                     {required: true, trigger: 'blur', message: '请输入验证码'}
