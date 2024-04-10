@@ -15,12 +15,15 @@
         </el-form>
 
         <el-dialog
-            title="重置密码"
+            :title="finPassTitle"
             :visible.sync="dialogVisible"
             width="30%"
             :modal="false"
         >
             <el-form :model="resetForm" :rules="resetRules" ref="resetForm">
+                <el-form-item label="账号" prop="userName" v-if="!flag">
+                    <el-input v-model="resetForm.userName" type="number"></el-input>
+                </el-form-item>
                 <el-form-item label="新密码" prop="newPass">
                     <el-input v-model="resetForm.newPass" type="password"></el-input>
                 </el-form-item>
@@ -35,28 +38,34 @@
                 </el-form-item>
                 <el-form-item>
                     <div class="button-container">
+                        <!-- 添加获取验证码按钮 -->
+                        <el-button @click="getVerificationCode" type="primary">获取验证码</el-button>
                         <el-button type="primary" @click="submitResetForm">提交</el-button>
                     </div>
                 </el-form-item>
             </el-form>
         </el-dialog>
+
     </div>
 
 </template>
 
 <script>
-import {login, setOnePass} from '../api'
+import {findPass, login, sendCode, setOnePass} from '../api'
 import Cookie from 'js-cookie'
 
 export default {
     data() {
         return {
+            flag: true,
+            finPassTitle: '重置密码',
             dialogVisible: false,
             form: {
                 userName: '',
                 userPassword: ''
             },
             resetForm: {
+                userName: '',
                 newPass: '',
                 confirmPassword: '',
                 email: '',
@@ -73,6 +82,9 @@ export default {
                 ],
             },
             resetRules: {
+                userName: [
+                    {required: true, trigger: 'blur', message: '请输入账号'}
+                ],
                 newPass: [
                     {required: true, trigger: 'blur', message: '请输入新密码'}
                 ],
@@ -91,9 +103,15 @@ export default {
     },
     methods: {
         forget() {
-            this.$message.error("请联系学校管理员:2933203540@qq.com")
+            this.finPassTitle = '找回密码'
+            this.dialogVisible = true
+
+            //修改弹窗flag
+            this.flag = false
         },
         submit() {
+            //修改弹窗状态
+            this.flag = true
             //token
             //将token信息存入cookie 用于不同页面的通信
             this.$refs.form.validate((valid) => {
@@ -131,21 +149,29 @@ export default {
             this.$refs.resetForm.validate((valid) => {
                 if (valid) {
                     // 在这里执行重置密码的逻辑
-                    console.log('重置密码表单数据:', this.resetForm);
-                    console.log(this.resetForm.oldPass)
-                    if (this.resetForm.oldPass === this.resetForm.newPass) {
-                        this.$message.error("新密码不能和旧密码相同！")
+                    if (this.flag) {
+                        if (this.resetForm.oldPass === this.resetForm.newPass) {
+                            this.$message.error("新密码不能和旧密码相同！")
+                        } else {
+                            setOnePass(this.resetForm).then(({data}) => {
+
+
+                                if (data.code === 200) {
+                                    this.passCommon()
+                                } else {
+                                    this.$message.error(data.msg)
+                                }
+
+                            })
+                        }
                     } else {
-                        setOnePass(this.resetForm).then(({data}) => {
-                            this.$message.success("hello")
+                        this.resetForm.id = this.resetForm.userName
+                        findPass(this.resetForm).then(({data}) => {
+                            if (data.code === 200) {
+                                this.passCommon()
+                            }
                         })
-
-
-                        // 重置成功后
-                        this.dialogVisible = false;
                     }
-
-
                 }
             });
         },
@@ -156,6 +182,35 @@ export default {
                 callback(new Error('两次输入密码不一致!'));
             } else {
                 callback();
+            }
+        },
+        getVerificationCode() {
+            if (this.resetForm.email === null) {
+                this.$message.error("请输入邮箱")
+            } else {
+                sendCode(this.resetForm.email, this.resetForm.userName, this.flag === true ? 1 : 0).then(({data}) => {
+                    console.log(data)
+                    if (data.code === 200) {
+                        this.$message.success("验证码已发送")
+                    } else if (data.code === 500) {
+                        this.$message.error(data.msg)
+                    }
+                })
+            }
+        },
+        passCommon() {
+            // 重置成功后
+            this.dialogVisible = false;
+
+            this.$message.success("修改成功, 请重新登陆！")
+
+            this.resetForm = {
+                newPass: '',
+                confirmPassword: '',
+                email: '',
+                id: '',
+                oldPass: '',
+                code: ''
             }
         }
     }
